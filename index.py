@@ -11,8 +11,8 @@ detector = PoseDetector()
 shirtFolderPath = "Resources/Shirts"
 listShirts = os.listdir(shirtFolderPath)
 # print(listShirts)
-fixedRatio = 581 / 440  # widthOfShirt/widthOfPoint11to12
-shirtRatioHeightWidth = 0.75
+fixedRatio = 262 / 190  # widthOfShirt/widthOfPoint11to12
+shirtRatioHeightWidth = 581 / 440
 imageNumber = 0
 imgButtonRight = cv2.imread("Resources/button.png", cv2.IMREAD_UNCHANGED)
 imgButtonLeft = cv2.flip(imgButtonRight, 1)
@@ -29,13 +29,16 @@ while True:
     lmList, bboxInfo = detector.findPosition(img, bboxWithHands=False, draw=False)
     if lmList:
         # center = bboxInfo["center"]
-        lm11 = lmList[11][1:3]
-        lm12 = lmList[12][1:3]
+        #leftEyeOuter = lmList[3]
+        #rightEyeOuter = lmList[6]
+        #print(leftEyeOuter, rightEyeOuter)
+        lm11 = lmList[11]  # 右肩
+        lm12 = lmList[12]  # 左肩
+        print(lm11, lm12)
         imgShirt = cv2.imread(os.path.join(shirtFolderPath, listShirts[imageNumber]), cv2.IMREAD_UNCHANGED)
 
         widthOfShirt = int((lm11[0] - lm12[0]) * fixedRatio)
-        print(widthOfShirt)
-        widthOfShirt = 190
+        #print(widthOfShirt)
         imgShirt = cv2.resize(imgShirt, (widthOfShirt, int(widthOfShirt * shirtRatioHeightWidth)))
         currentScale = (lm11[0] - lm12[0]) / 190
         offset = int(44 * currentScale), int(48 * currentScale)

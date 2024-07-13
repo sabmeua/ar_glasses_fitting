@@ -1,5 +1,5 @@
 import os
-
+import math
 import cvzone
 import cv2
 from cvzone.PoseModule import PoseDetector
@@ -38,6 +38,13 @@ while True:
         imgShirt = cv2.resize(imgShirt, (widthOfShirt, int(widthOfShirt * shirtRatioHeightWidth)))
         currentScale = (lm11[0] - lm12[0]) / 190
         offset = int(44 * currentScale), int(48 * currentScale)
+    
+        # 傾き計算
+        angle = math.degrees(math.atan2(lm11[1] - lm12[1], lm11[0] - lm12[0]))
+
+        # 画像の回転
+        M = cv2.getRotationMatrix2D((widthOfShirt // 2, int(widthOfShirt * shirtRatioHeightWidth) // 2), -angle, 1)
+        imgShirt = cv2.warpAffine(imgShirt, M, (widthOfShirt, int(widthOfShirt * shirtRatioHeightWidth)))
 
         try:
             img = cvzone.overlayPNG(img, imgShirt, (lm12[0] - offset[0], lm12[1] - offset[1]))
